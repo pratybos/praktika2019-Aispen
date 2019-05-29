@@ -1,7 +1,5 @@
-#ifndef functions_h
-#define functions_h
-
-void
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 
 

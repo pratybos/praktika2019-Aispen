@@ -1,15 +1,16 @@
-#include "game.h"
-
+#include"game.h"
 
 using namespace std;
 
 int main()
 {
 	srand(time(NULL));
-	game game;
-	while(game.getplaying())
-	{
 
+	game Game;
+
+	while(Game.playing())
+	{
+		Game.MainMenu();
 	}
 
 	return 0;

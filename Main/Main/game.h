@@ -1,11 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <ctime>
-#include "pch.h"
-#include "functions.h"
+#include"functions.h"
+#include"Player.h"
+#include<iostream>
+#include<iomanip>
+#include<ctime>
 
 using namespace std;
 
@@ -21,10 +20,11 @@ public:
 
 	// functions
 	void MainMenu(); // pagrindinis meniu ijungus
-
+	void DifficultySetting(); // sunkumo pasirinkimas
+	void CharacterCreation(); // zaidejo sukurimas
 
 	// accessors
-	inline bool getplaying() const { return this->running; }
+	inline bool playing() const { return this->running; } // ar zaidzia
 
 	// modifiers
 
@@ -32,5 +32,6 @@ public:
 private:
 	bool running; // ar zaidimas veikia, ar isjunktas
 	int choice; // pasirinkimai
+	int difficulty; //1 lengvas //2 sunkus
 };
 

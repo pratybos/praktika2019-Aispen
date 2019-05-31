@@ -1,7 +1,3 @@
-﻿  GameLogic.cpp
-  Main.cpp
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(7): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Player.cpp
-f:\projects\github\praktika2019-aispen\main\main\player.cpp(65): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
+﻿  Main.cpp
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(222): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Main.vcxproj -> F:\PROJECTS\GitHub\praktika2019-Aispen\Main\Debug\Main.exe

@@ -1,4 +1,4 @@
-#include"game.h"
+#include"GameLogic.h"
 
 using namespace std;
 
@@ -6,7 +6,7 @@ int main()
 {
 	srand(time(NULL));
 
-	game Game;
+	GameLogic Game;
 
 	while(Game.playing())
 	{

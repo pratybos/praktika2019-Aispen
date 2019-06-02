@@ -1,4 +1,5 @@
 #include<iostream>
+#include <cstdlib>
 #include<iomanip>
 #include<ctime>
 #include<string>
@@ -22,6 +23,8 @@ void Shop();
 void Buy();
 void Sell();
 void AddItem();
+void Equip();
+void rEquip();
 
 //STRUKTUROS
 
@@ -39,34 +42,18 @@ struct Items {
 		items[1].name = "Potion";
 		items[1].value = 50;
 		items[1].type = 0;
-		items[2].name = "Bronze Helm";    items[2].value = 80;   items[2].type = 2;  items[2].def = 8;
-		items[3].name = "Bronze Armor";   items[3].value = 140;  items[3].type = 3;  items[3].def = 15;
-		items[4].name = "Bronze Boots";   items[4].value = 80;   items[4].type = 4;  items[4].def = 6;
-		items[5].name = "Bronze Sword";   items[5].value = 100;  items[5].type = 1;  items[5].dmg = 10;
-		items[6].name = "Steel Helm";
-		items[6].value = 800;
-		items[6].type = 2;
-		items[7].name = "Steel Armor";
-		items[7].value = 1400;
-		items[7].type = 3;
-		items[8].name = "Steel Boots";
-		items[8].value = 800;
-		items[8].type = 4;
-		items[9].name = "Steel Sword";
-		items[9].value = 1000;
-		items[9].type = 1;
-		items[10].name = "Rune Helm";
-		items[10].value = 2000;
-		items[10].type = 2;
-		items[11].name = "Rune Armor";
-		items[11].value = 2500;
-		items[11].type = 3;
-		items[12].name = "Rune Boots";
-		items[12].value = 2000;
-		items[12].type = 4;
-		items[13].name = "Rune Sword";
-		items[13].value = 1500;
-		items[13].type = 1;
+		items[2].name = "Bronze Helm";    items[2].value = 80;     items[2].type = 2;  items[2].def = 8;
+		items[3].name = "Bronze Armor";   items[3].value = 140;    items[3].type = 3;  items[3].def = 15;
+		items[4].name = "Bronze Boots";   items[4].value = 80;     items[4].type = 4;  items[4].def = 6;
+		items[5].name = "Bronze Sword";   items[5].value = 100;    items[5].type = 1;  items[5].dmg = 10;
+		items[6].name = "Steel Helm";     items[6].value = 800;    items[6].type = 2;  items[6].def = 16;
+		items[7].name = "Steel Armor";    items[7].value = 1400;   items[7].type = 3;  items[7].def = 30;
+		items[8].name = "Steel Boots";    items[8].value = 800;    items[8].type = 4;  items[8].def = 12;
+		items[9].name = "Steel Sword";    items[9].value = 1000;   items[9].type = 1;  items[9].dmg = 20;
+		items[10].name = "Rune Helm";     items[10].value = 2000;  items[10].type = 2; items[10].def = 24;
+		items[11].name = "Rune Armor";    items[11].value = 2500;  items[11].type = 3; items[11].def = 45;
+		items[12].name = "Rune Boots";    items[12].value = 2000;  items[12].type = 4; items[12].def = 18;
+		items[13].name = "Rune Sword";    items[13].value = 1500;  items[13].type = 1; items[13].dmg = 30;
 	}
 }items[13];
 
@@ -143,6 +130,7 @@ void MainMenu()
 // Reikia apsaugu
 void InitGame()
 {
+	system("cls");
 	cout << endl << endl;
 	cout << "=== Enter your hero name === " << endl;
 	cout << "Name is: ";
@@ -159,7 +147,7 @@ void InitGame()
 	cout << "=============================";
 
 	system("cls");
-
+	Inv.push_back({ items[0].name = "", items[0].value = 0, items[0].type = 0, items[0].dmg = 0, items[0].def = 0 });
 }
 
 void IngameMenu()
@@ -185,7 +173,6 @@ void IngameMenu()
 		break;
 	case 2:
 		PrintInventory();
-		system("pause");
 		break;
 	case 3:
 		PlayerStats();
@@ -223,7 +210,6 @@ void levelUp()
 	{
 		player.exp -= player.expNext;
 		player.level++;
-		player.exp = 0;
 		player.expNext =
 			(50 / 3)*(pow(player.level, 3) - 6 * pow(player.level, 3) + (17 * player.level) - 11);
 
@@ -239,21 +225,36 @@ void PrintInventory()
 {
 	system("cls");
 	cout << "=== Inventory ===" << endl;
-	cout << "You have gold: " << player.gold << endl;
+	cout << "You .have gold: " << player.gold << endl;
 	cout << "You have items: " << player.NumberOfItems << endl;
 	cout << "==================" << endl;
-	for (int i = 0; i < Inv.size(); i++)
+	for (int i = 1; i < Inv.size(); i++)
 	{
-		cout << Inv[i].name;
+		if (Inv[i].name != "") { cout << i << ". " << Inv[i].name; }
 		if (Inv[i].dmg != 0) { cout << " |DMG: " << Inv[i].dmg; }
 		if (Inv[i].def != 0) { cout << " |DEF: " << Inv[i].def; }
-		cout << " |Price: " << Inv[i].value << endl;
+		if (Inv[i].value != 0) { cout << " |Price: " << Inv[i].value << endl; }
 	}
 	cout << "==================" << endl;
 	cout << "1. Equip ===" << endl;
 	cout << "2. Remove equiped ===" << endl;
 	cout << "0. Leave ===" << endl << endl;
 	cout << "== Your choice: ";
+	switch (choice)
+	{
+	case 1:
+		Equip();
+		break;
+	case 2:
+		rEquip();
+		break;
+	case 0:
+		IngameMenu();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Shop()
@@ -293,6 +294,7 @@ void Buy()
 	}
 	cout << "0. Go back" << endl;
 	cout << "Your gold: " << player.gold << endl;
+	cout << "=================" << endl;;
 	cout << "=== Your choice: ";
 	cin >> choice;
 
@@ -323,12 +325,12 @@ void Sell()
 {
 	system("cls");
 	cout << "=== SELL ===" << endl;
-	for (int i = 0; i < Inv.size(); i++)
+	for (int i = 1; i < Inv.size(); i++)
 	{
-		cout << i+1 << ". " << Inv[i].name;
+		if (Inv[i].name != "") { cout << i << ". " << Inv[i].name; }
 		if (Inv[i].dmg != 0) { cout << " |DMG: " << Inv[i].dmg; }
 		if (Inv[i].def != 0) { cout << " |DEF: " << Inv[i].def; }
-		cout << " |Price: " << Inv[i].value << endl;
+		if (Inv[i].value != 0) { cout << " |Price: " << Inv[i].value << endl; }
 	}
 	cout << "==================" << endl;
 	cout << "0. Go back" << endl;
@@ -337,7 +339,18 @@ void Sell()
 	cin >> choice;
 	player.gold += Inv[choice].value;
 	player.NumberOfItems -= 1;
-	Inv.erase(Inv.begin() + (choice-1)); // Neveikia kai issitrina visi
+	Inv.erase(Inv.begin() + choice);
+	Sell();
+}
+
+void Equip()
+{
+
+}
+
+void rEquip()
+{
+
 }
 
 void AddItem()

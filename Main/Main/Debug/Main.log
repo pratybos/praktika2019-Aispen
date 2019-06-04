@@ -1,5 +1,1 @@
-﻿  Main.cpp
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(230): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(247): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(328): warning C4018: '<': signed/unsigned mismatch
-  Main.vcxproj -> F:\PROJECTS\GitHub\praktika2019-Aispen\Main\Debug\Main.exe
+﻿  Main.vcxproj -> F:\PROJECTS\GitHub\praktika2019-Aispen\Main\Debug\Main.exe

@@ -1,0 +1,20 @@
+Bronze Sword
+100
+1
+10
+0
+Bronze Helm
+80
+2
+0
+8
+Bronze Armor
+140
+3
+0
+15
+test Boots
+80
+4
+0
+6

@@ -5,6 +5,7 @@
 #include<ctime>
 #include<string>
 #include<vector>
+#include <fstream>
 
 using namespace std;
 
@@ -19,13 +20,18 @@ void InitGame(); // name and difficulty
 void IngameMenu(); 
 void levelUp();
 void PlayerStats();
+void Travel();
+void Battle();
 void PrintInventory();
 void Shop();
 void Buy();
 void Sell();
 void Equip();
 void rEquip();
-
+void Save();
+void Load();
+void Story();
+void Achievements();
 //STRUKTUROS
 
 struct Items {
@@ -49,7 +55,7 @@ struct Items {
 		items[10].name = "Rune Helm";     items[10].value = 2000;  items[10].type = 2; items[10].def = 24;
 		items[11].name = "Rune Armor";    items[11].value = 2500;  items[11].type = 3; items[11].def = 45;
 		items[12].name = "Rune Boots";    items[12].value = 2000;  items[12].type = 4; items[12].def = 18;
-		items[13].name = "Rune SWORD";    items[13].value = 1500;  items[13].type = 1; items[13].dmg = 30;
+		items[13].name = "Rune Sword";    items[13].value = 1500;  items[13].type = 1; items[13].dmg = 30;
 	}
 }items[13];
 
@@ -58,13 +64,37 @@ struct Player{
 	int level = 1;
 	int exp = 0;
 	int expNext = static_cast<int>((50 / 3)*(pow(level, 3) - 6 * pow(level, 2) + (17 * level) - 12)) + 20;
-	int hp = 10, hpMax = 10;
-	int damageMin = 4, damageMax = 6;
+	int hp = hpMax;
+	int hpMax = 20;
+	int damageMin = 4;
+	int damageMax = 6;
 	int defence = 6;
+	int accuracy = (damageMax/2);
 	int difficulty; //1 lengvas //2 sunkus
 	int NumberOfItems = 0;
+	int potions = 0;
 	int gold = 1000;
+	int deathcount = 0;
+	int mappiece = 0;
+	int achv1 = 0; // put on sword
+	int achv2 = 0; // put on helm
+	int achv3 = 0; // put on armor
+	int achv4 = 0; // boots
+	int achvBUY = 0; // buy 1, 10, 100 item
+	int achvSELL = 0; // sell 1, 10, 100 item
+	int achvLVL = level; // reach lvl 10, 25, 50
+	int achvKILL = 0; //kill 10, 100
 }player;
+
+struct Enemy {
+	int level = player.level;
+	int hpMax = player.hpMax*0.5;
+	int hp = hpMax;
+	int damageMax = player.damageMax *0.7;
+	int damageMin = (damageMax *0.5);
+	int accuracy = (player.accuracy / 2);
+	int defence = player.defence / 2;
+}enemy;
 
 struct Inventory {
 	string name;
@@ -74,7 +104,7 @@ struct Inventory {
 	int def; //defence points
 };
 
-vector<Inventory> Inv;
+vector<Inventory> Inv; //Inv.insert(Inv.begin(), { items[0].name = "", items[0].value = 0, items[0].type = 0, items[0].dmg = 0, items[0].def = 0 });
 Inventory Equipment[3];
 
 int main()
@@ -111,16 +141,16 @@ void MainMenu()
 		IngameMenu();
 		break;
 	case 2:
-
+		Load();
+		IngameMenu();
 		break;
 	case 3:
-
 		break;
 	default:
 		break;
 	}
 }
-// Reikia apsaugu
+
 void InitGame()
 {
 	system("cls");
@@ -160,7 +190,8 @@ void IngameMenu()
 		cout << "  2. Inventory" << endl;
 		cout << "  3. Player Stats" << endl;
 		cout << "  4. Shop" << endl;
-		cout << "  5. TEST" << endl;
+		cout << "  5. Achievements" << endl;
+		cout << "  6. Save game" << endl;
 		cout << "  0. Quit game" << endl;
 		cout << "=========================" << endl;
 		cout << "Your choice: ";
@@ -172,6 +203,7 @@ void IngameMenu()
 			running = false;
 			break;
 		case 1:
+			Travel();
 			break;
 		case 2:
 			PrintInventory();
@@ -183,11 +215,10 @@ void IngameMenu()
 			Shop();
 			break;
 		case 5:
-			for (int i = 0; i < 5; i++)
-			{
-				cout << i << "Item [ " << Equipment[i].name << " ]" << endl;
-			}
-			system("pause");
+			Achievements();
+			break;
+		case 6:
+			Save();
 			break;
 		default:
 			break;
@@ -223,14 +254,145 @@ void levelUp()
 	{
 		player.exp -= player.expNext;
 		player.level++;
-		player.expNext =
-			(50 / 3)*(pow(player.level, 3) - 6 * pow(player.level, 3) + (17 * player.level) - 11);
-
+		player.expNext = 20*player.level;
 		player.hpMax += 5;
 		player.damageMin += 3;
 		player.damageMax += 3;
 		player.defence += 2;
 	}
+	return;
+}
+
+void Travel()
+{
+	system("cls");
+	cout << " ENEMEY IS FOUND" << endl;
+	cout << "=================" << endl;
+	cout << "Level: " << enemy.level << " HP: " << enemy.hpMax << endl;
+	cout << "=================" << endl;
+	cout << "1. Fight" << endl;
+	cout << "2. Run" << endl;
+	cout << "=================" << endl;
+
+	cin >> choice;
+	switch (choice)
+	{
+	case 1:
+		Battle();
+		break;
+	case 2:
+		return;
+		break;
+	case 0:
+		break;
+	default:
+		cout << "No such option" << endl;
+	}
+
+}
+
+void Battle()
+{
+	bool isAliveMob = true;
+	bool IsAlivePlayer = true;
+	int chance;
+	//enemy
+	int MhpMax = enemy.hpMax*player.difficulty;
+	int Mhp = enemy.hpMax;
+
+	//player
+	int Php = player.hpMax;
+	int PhpMax = player.hpMax;
+
+	while (isAliveMob && IsAlivePlayer)
+	{
+		cout << "====BATTLE====" << endl;
+		cout << "Monster HP: "<< Mhp << " / " << MhpMax << endl;
+		cout << "==============" << endl;
+		cout << "Your HP: " << Php << " / " << PhpMax << endl;
+		cout << "==============" << endl << endl;
+		cout << "1. Attack" << endl;
+		cout << "2. Drink HP Potion" << endl;
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:
+			if (chance = rand() % player.accuracy >= player.accuracy/2)
+			{
+				Mhp -= player.damageMax;
+				cout << "Hit enemy for " << player.damageMax << endl;
+				if (Mhp <= 0)
+				{
+					isAliveMob = false;
+				}
+			}
+			else
+			{
+				cout << "You missed" << endl;
+			}
+			break;
+		case 2:
+			if (player.potions > 0)
+			{
+				Php += 10 + (player.level*0.5);
+				player.potions--;
+				player.NumberOfItems--;
+			}
+			else 
+			{
+				cout << "You dont have any potions"<< endl;
+			}
+			break;
+		default:
+			cout << "No such option" << endl;
+		}
+		if (chance = rand() % enemy.accuracy >= enemy.accuracy/3)
+		{
+			Php -= enemy.damageMax;
+			cout << "Enemy hit you enemy for " << enemy.damageMax << endl;
+			if (Php <= 0)
+			{
+				IsAlivePlayer = false;
+			}
+		}
+		else
+		{
+			cout << "Enemy missed" << endl;
+		}
+	}
+	if (!isAliveMob)
+	{
+		cout << "====BATTLE====" << endl;
+		cout << "Monster HP: " << Mhp << " / " << MhpMax << endl;
+		cout << "==============" << endl;
+		cout << "Your HP: " << Php << " / " << PhpMax << endl;
+		cout << "==============" << endl;
+		cout << "You won and got: " << 10 * enemy.level*player.difficulty << "XP and Gold:" << 5 * enemy.level / 2 * player.difficulty << endl;
+		player.exp += 10 + (enemy.level*player.difficulty);
+		player.gold += 5 + (enemy.level / 2 * player.difficulty);
+		levelUp();
+		player.achvKILL++;
+		if (chance = rand() % 100 > 50)
+		{
+			Inv.push_back({ items[0].name, items[0].value, items[0].type, items[0].dmg, items[0].def });
+			player.mappiece++;
+			cout << "You found map piece" << endl;
+		}
+		system("pause");
+	}
+	else if (!IsAlivePlayer)
+	{
+		cout << "====BATTLE====" << endl;
+		cout << "Monster HP: " << Mhp << " / " << MhpMax << endl;
+		cout << "==============" << endl;
+		cout << "Your HP: " << Php << " / " << PhpMax << endl;
+		cout << "==============" << endl;
+		cout << "You died..." << player.deathcount << " / 3 " << endl;
+		player.gold /= 2;
+		player.deathcount++;
+		system("pause");
+	}
+	Story();
 	return;
 }
 
@@ -242,6 +404,7 @@ void PrintInventory()
 		cout << "=== Inventory ===" << endl;
 		cout << "You .have gold: " << player.gold << endl;
 		cout << "You have items: " << player.NumberOfItems << endl;
+		cout << "You have HP potions: " << player.potions << endl;
 		cout << "==================" << endl;
 		for (int i = 1; i < Inv.size(); i++)
 		{
@@ -332,10 +495,21 @@ void Buy()
 		}
 		else if (player.gold >= items[choice].value) // pirkimas
 		{
-			player.gold -= items[choice].value;
-			player.NumberOfItems += 1;
-			Inv.push_back({ items[choice].name, items[choice].value, items[choice].type, items[choice].dmg, items[choice].def });
-			continue;
+			if (choice == 1)
+			{
+				player.gold -= items[choice].value;
+				player.NumberOfItems += 1;
+				player.potions++;
+				continue;
+			}
+			else if (choice > 1)
+			{
+				player.gold -= items[choice].value;
+				player.NumberOfItems += 1;
+				Inv.push_back({ items[choice].name, items[choice].value, items[choice].type, items[choice].dmg, items[choice].def });
+				continue;
+			}
+			player.achvBUY++;
 		}
 	}
 }
@@ -353,6 +527,7 @@ void Sell()
 			if (Inv[i].def != 0) { cout << " |DEF: " << Inv[i].def; }
 			if (Inv[i].value != 0) { cout << " |Price: " << Inv[i].value << endl; }
 		}
+		
 		cout << "==================" << endl;
 		cout << "0. Go back" << endl;
 		cout << "Your gold: " << player.gold << endl;
@@ -373,6 +548,7 @@ void Sell()
 			player.gold += Inv[choice].value;
 			player.NumberOfItems -= 1;
 			Inv.erase(Inv.begin() + choice);
+			player.achvSELL++;
 		}
 
 	}
@@ -403,7 +579,7 @@ void Equip()
 		{
 			break;
 		}
-		else if (choice > 3 || choice < 0) 
+		else if (choice < 0 || Inv[choice].name == "") 
 		{
 			cout << "No such item" << endl;
 			system("pause");
@@ -417,6 +593,7 @@ void Equip()
 				player.damageMin += Inv[choice].dmg;
 				player.damageMax += Inv[choice].dmg;
 				Inv.erase(Inv.begin() + choice);
+				player.achv1++;
 			}
 			else
 			{
@@ -432,6 +609,7 @@ void Equip()
 				Equipment[1] = { Inv[choice].name, Inv[choice].value, Inv[choice].type, Inv[choice].dmg, Inv[choice].def };
 				player.defence += Inv[choice].def;
 				Inv.erase(Inv.begin() + choice);
+				player.achv2++;
 			}
 			else
 			{
@@ -447,6 +625,7 @@ void Equip()
 				Equipment[2] = { Inv[choice].name, Inv[choice].value, Inv[choice].type, Inv[choice].dmg, Inv[choice].def };
 				player.defence += Inv[choice].def;
 				Inv.erase(Inv.begin() + choice);
+				player.achv3++;
 			}
 			else
 			{
@@ -462,6 +641,7 @@ void Equip()
 				Equipment[3] = { Inv[choice].name, Inv[choice].value, Inv[choice].type, Inv[choice].dmg, Inv[choice].def };
 				player.defence += Inv[choice].def;
 				Inv.erase(Inv.begin() + choice);
+				player.achv4++;
 			}
 			else
 			{
@@ -560,3 +740,235 @@ void rEquip()
 
 }
 
+void Story()
+{
+	int map=0;
+	if (player.deathcount == 3)
+	{
+		cout << "==================================================" << endl;
+		cout << "|You died third time, your body cant take anymore.|" << endl;
+		cout << "|It is the end                                    |" << endl;
+		cout << "==================================================" << endl;
+		system("pause");
+		exit(0);
+	}
+	if (player.mappiece == 4)
+	{
+		cout << "=========================================================================" << endl;
+		cout << "|You finally found the last piece of the map and put the puzzle together|" << endl;
+		cout << "|Unimaginable riches are waiting for you... Or not...                   |" << endl;
+		cout << "=========================================================================" << endl;
+		system("pause");
+		exit(0);
+	}
+}
+
+void Save()
+{
+	ofstream offput;
+	offput.open("playerstats.txt");
+	if (!offput.is_open())
+	{
+		cout << "Error while saving stats" << endl;
+	}
+	else
+	{
+		cout << "Saving Game..." << endl;
+		//stats
+		offput << player.name << "\n";
+		offput << player.level << "\n";
+		offput << player.exp << "\n";
+		offput << player.expNext << "\n";
+		offput << player.hp << "\n";
+		offput << player.hpMax << "\n";
+		offput << player.defence << "\n";
+		offput << player.difficulty << "\n";
+		offput << player.NumberOfItems << "\n";
+		offput << player.gold << "\n";
+	}
+	offput.close();
+	// GEAR
+	offput.open("playergear.txt");
+	if (!offput.is_open())
+	{
+		cout << "Error while saving gear" << endl;
+	}
+	else
+	{
+			for (int i = 0; i <= 3; i++)
+			{
+				offput << Equipment[i].name << "\n";
+				offput << Equipment[i].value << "\n";
+				offput << Equipment[i].type << "\n";
+				offput << Equipment[i].dmg << "\n";
+				offput << Equipment[i].def << "\n";
+			}
+	}
+	offput.close();
+			// inventory
+	offput.open("playerinventory.txt");
+	if (!offput.is_open())
+	{
+		cout << "Error while saving inventory" << endl;
+	}
+	else
+	{
+			for (int i = 0; i <= Inv.size(); i++)
+			{
+				offput << items[i].name << "\n";
+				offput << items[i].value << "\n";
+				offput << items[i].type << "\n";
+				offput << items[i].dmg << "\n";
+				offput << items[i].def << "\n";
+			}
+	}
+	offput.close();
+
+	cout << "Done Saving" << endl << endl;
+	system("pause");
+}
+
+void Load()
+{
+	ifstream input;
+	input.open("playerstats.txt");
+	if (!input)
+	{
+		cout << "Error while loading stats" << endl;
+	}
+	else
+	{
+		cout << "Loading Stats..." << endl;
+		while(!input.eof())
+		input >> player.name;
+		input >> player.level;
+		input >> player.exp;
+		input >> player.expNext;
+		input >> player.hp;
+		input >> player.hpMax;
+		input >> player.defence;
+		input >> player.difficulty;
+		input >> player.NumberOfItems;
+		input >> player.gold;
+	}
+	input.close();
+	// GEAR
+	input.open("playergear.txt");
+	if (!input)
+	{
+		cout << "Error while loading gear" << endl;
+	}
+	else
+	{
+		cout << "Loading Gear..." << endl;
+			for (int i = 0; i <= 3; i++)
+			{
+				input >> Equipment[i].name;
+				input >> Equipment[i].value;
+				input >> Equipment[i].type;
+				input >> Equipment[i].dmg;
+				input >> Equipment[i].def;
+			}
+	}
+	input.close();
+			// inventory
+	input.open("playerinventory.txt");
+	if (!input)
+	{
+		cout << "Error while loading inventory" << endl;
+	}
+	else
+	{
+		cout << "Loading Inventory..." << endl;
+		int count = 1;
+		int item;
+		Inv.insert(Inv.begin(), { items[0].name = "", items[0].value = 0, items[0].type = 0, items[0].dmg = 0, items[0].def = 0 });
+		while(!input.eof())
+		{
+			input >> Inv.insert(Inv.begin() + count, { items[0].name });
+			input >> Inv[count].value;
+			input >> Inv[count].type;
+			input >> Inv[count].dmg;
+			input >> Inv[count].def;
+			count++;
+		}
+	}
+	input.close();
+
+	cout << "Loading complete" << endl << endl;
+	system("pause");
+}
+
+void Achievements()
+{
+	cout << "==== UNLOCKED ACHIEVEMENTS ====" << endl << endl;
+	if (player.achv1 > 0)
+	{
+		cout << "Rising hero: put sword on" << endl;
+	}
+	if (player.achv2 > 0)
+	{
+		cout << "Rising hero: put helmet on" << endl;
+	}
+	if (player.achv3 > 0)
+	{
+		cout << "Rising hero: put armor on" << endl;
+	}
+	if (player.achv4 > 0)
+	{
+		cout << "Rising hero: put boots on" << endl;
+	}
+	// BUY
+	if (player.achvBUY >= 10)
+	{
+		cout << "A few of those: Buy 10 items" << endl;
+	}
+	if (player.achvBUY >= 50)
+	{
+		cout << "Shopping spree: Buy 50 items" << endl;
+	}
+	if (player.achvBUY >= 100)
+	{
+		cout << "Too rich: Buy 100 items" << endl;
+	}
+	// SELL
+	if (player.achvSELL >= 10)
+	{
+		cout << "Small salary: Sell 10 items" << endl;
+	}
+	if (player.achvSELL >= 50)
+	{
+		cout << "Normal haul: Sell 50 items" << endl;
+	}
+	if (player.achvSELL >= 100)
+	{
+		cout << "Making a living for a generation: Sell 100 items" << endl;
+	}	
+	// LEVEL
+	if (player.achvLVL >= 10)
+	{
+		cout << "Little Man: Reach level 10" << endl;
+	}
+	if (player.achvLVL >= 25)
+	{
+		cout << "Known warrior: Reach level 25" << endl;
+	}
+	if (player.achvLVL >= 50)
+	{
+		cout << "Legend: Reach level 50" << endl;
+	}
+	// KILL
+	if (player.achvKILL >= 10)
+	{
+		cout << "Village guard: Kill 10 enemies" << endl;
+	}
+	if (player.achvKILL >= 50)
+	{
+		cout << "Killing spree: Kill 50 enemies" << endl;
+	}
+	if (player.achvKILL >= 100)
+	{
+		cout << "Village guard: Kill 100 enemies" << endl;
+	}
+	system("pause");
+}

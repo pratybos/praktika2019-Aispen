@@ -2,10 +2,10 @@
 f:\projects\github\praktika2019-aispen\main\main\main.cpp(94): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 f:\projects\github\praktika2019-aispen\main\main\main.cpp(96): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 f:\projects\github\praktika2019-aispen\main\main\main.cpp(97): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(343): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(424): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(538): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(555): warning C4018: '>': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(582): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(597): warning C4018: '>': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(347): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(428): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(542): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(559): warning C4018: '>': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(586): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(601): warning C4018: '>': signed/unsigned mismatch
   Main.vcxproj -> F:\PROJECTS\GitHub\praktika2019-Aispen\Main\Debug\Main.exe

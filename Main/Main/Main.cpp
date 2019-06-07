@@ -128,6 +128,7 @@ void MainMenu()
 	cout << "======= Main Menu =======" << endl;
 	cout << "  1. New Game" << endl;
 	cout << "  2. Game Rules" << endl;
+	cout << "  3. Rating" << endl;
 	cout << "  0. Quit Game" << endl << endl;
 	cout << "=========================" << endl;
 	cout << "Your choice: ";
@@ -144,6 +145,9 @@ void MainMenu()
 		break;
 	case 2:
 		Rules();
+		break;
+	case 3:
+		Rating();
 		break;
 	default:
 		break;
@@ -780,7 +784,7 @@ void Story()
 
 void Save()
 {
-	fstream failas;
+	fstream failas; //ifstream
 	failas.open("taskai.txt");
 	if (failas.good()) {
 		failas << player.name << " ";
@@ -1013,35 +1017,32 @@ void Rules()
 
 void Rating()
 {
-	string file_header = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"main.css\"><title>Rezultatai</title></head><body>";
-	string file_tail = "</body></html>";
-	ofstream failas;
-	ifstream taskai;
-
-	int kiekis = -1;
-	string a;
-	int b;
-	taskai.open("taskai.txt");
-	if (taskai.good()) {
-		while (!taskai.eof()) {
-			taskai >> a;
-			taskai >> b;
-			kiekis++;
+	int score[5];
+	string name[5];
+	ifstream info("taskai.txt");
+	if (info.good())
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			info >> name[i];
+			info >> score[i];
 		}
 	}
-	taskai.close();
-	string sorai[9000];
-	int sortai[9000];
 
-	taskai.open("taskai.txt");
-	if (taskai.good()) {
-		for (int i = 0; i < kiekis; i++) {
-			taskai >> sorai[i];
-			taskai >> sortai[i];
+	fstream html("Index.html");
+	string Header = "<html> <head> <link rel = \"stylesheet\" type = \"text/css\" href = \"Style.css\"> <title>The MAP</title> </head> <body>";
+	string Tail = "</body> </html>";
+	if (html.good())
+	{
+		html << Header;
+		for (int i = 1; i < 4; i++)
+		{
+			html << "****" << i << "****<br>" << endl;
+			html << "Player name: " << name[i] << "<br>" << endl;
+			html << "Player Score: " << score[i] << "<br>" << endl;
+			html << "</div>";
 		}
+		html << Tail;
 	}
-	
-	system("start rezultatai.html");
-	failas.close();
+	system("start Index.html");
 }
-// -- ^^

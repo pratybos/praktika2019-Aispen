@@ -1,2 +1,6 @@
-asd 1000 
+kepas 50220
+tomis 10000
+bagas 2030
+jonas 1050
+adaz 500
 

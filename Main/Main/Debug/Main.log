@@ -1,12 +1,11 @@
 ﻿  Main.cpp
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(91): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(93): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 f:\projects\github\praktika2019-aispen\main\main\main.cpp(94): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(337): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(409): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(523): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(540): warning C4018: '>': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(567): warning C4018: '<': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(816): warning C4018: '<=': signed/unsigned mismatch
-f:\projects\github\praktika2019-aispen\main\main\main.cpp(884): warning C4101: 'item': unreferenced local variable
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(96): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(97): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(343): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(424): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(538): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(555): warning C4018: '>': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(582): warning C4018: '<': signed/unsigned mismatch
+f:\projects\github\praktika2019-aispen\main\main\main.cpp(597): warning C4018: '>': signed/unsigned mismatch
   Main.vcxproj -> F:\PROJECTS\GitHub\praktika2019-Aispen\Main\Debug\Main.exe

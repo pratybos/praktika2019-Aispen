@@ -6,6 +6,7 @@
 #include<string>
 #include<vector>
 #include <fstream>
+#include <windows.h>
 
 using namespace std;
 
@@ -32,6 +33,8 @@ void Save();
 void Load();
 void Story();
 void Achievements();
+void Rating();
+void Rules();
 //STRUKTUROS
 
 struct Items {
@@ -69,7 +72,7 @@ struct Player{
 	int damageMin = 4;
 	int damageMax = 6;
 	int defence = 6;
-	int accuracy = (damageMax/2);
+	int accuracy = 8;
 	int difficulty; //1 lengvas //2 sunkus
 	int NumberOfItems = 0;
 	int potions = 0;
@@ -88,7 +91,7 @@ struct Player{
 
 struct Enemy {
 	int level = player.level;
-	int hpMax = player.hpMax*0.5;
+	int hpMax = player.hpMax*0.7;
 	int hp = hpMax;
 	int damageMax = player.damageMax *0.7;
 	int damageMin = (damageMax *0.5);
@@ -102,7 +105,7 @@ struct Inventory {
 	int type;
 	int dmg; //damage points
 	int def; //defence points
-};
+}Invv;
 
 vector<Inventory> Inv; //Inv.insert(Inv.begin(), { items[0].name = "", items[0].value = 0, items[0].type = 0, items[0].dmg = 0, items[0].def = 0 });
 Inventory Equipment[3];
@@ -124,8 +127,7 @@ void MainMenu()
 {
 	cout << "======= Main Menu =======" << endl;
 	cout << "  1. New Game" << endl;
-	cout << "  2. Load Game" << endl;
-	cout << "  3. Rating" << endl;
+	cout << "  2. Game Rules" << endl;
 	cout << "  0. Quit Game" << endl << endl;
 	cout << "=========================" << endl;
 	cout << "Your choice: ";
@@ -141,10 +143,7 @@ void MainMenu()
 		IngameMenu();
 		break;
 	case 2:
-		Load();
-		IngameMenu();
-		break;
-	case 3:
+		Rules();
 		break;
 	default:
 		break;
@@ -191,7 +190,6 @@ void IngameMenu()
 		cout << "  3. Player Stats" << endl;
 		cout << "  4. Shop" << endl;
 		cout << "  5. Achievements" << endl;
-		cout << "  6. Save game" << endl;
 		cout << "  0. Quit game" << endl;
 		cout << "=========================" << endl;
 		cout << "Your choice: ";
@@ -216,9 +214,6 @@ void IngameMenu()
 			break;
 		case 5:
 			Achievements();
-			break;
-		case 6:
-			Save();
 			break;
 		default:
 			break;
@@ -259,6 +254,7 @@ void levelUp()
 		player.damageMin += 3;
 		player.damageMax += 3;
 		player.defence += 2;
+		player.accuracy += 1;
 	}
 	return;
 }
@@ -293,11 +289,12 @@ void Travel()
 
 void Battle()
 {
+	system("cls");
 	bool isAliveMob = true;
 	bool IsAlivePlayer = true;
 	int chance;
 	//enemy
-	int MhpMax = enemy.hpMax*player.difficulty;
+	int MhpMax = enemy.hpMax;
 	int Mhp = enemy.hpMax;
 
 	//player
@@ -319,8 +316,17 @@ void Battle()
 		case 1:
 			if (chance = rand() % player.accuracy >= player.accuracy/2)
 			{
-				Mhp -= player.damageMax;
-				cout << "Hit enemy for " << player.damageMax << endl;
+				chance = rand() % 100;
+				if (chance >= 50)
+				{
+					Mhp -= player.damageMax;
+					cout << "Hit enemy for " << player.damageMax << endl;
+				}
+				if (chance < 50)
+				{
+					Mhp -= player.damageMin;
+					cout << "Hit enemy for " << player.damageMin << endl;
+				}
 				if (Mhp <= 0)
 				{
 					isAliveMob = false;
@@ -346,10 +352,19 @@ void Battle()
 		default:
 			cout << "No such option" << endl;
 		}
-		if (chance = rand() % enemy.accuracy >= enemy.accuracy/3)
+		if (chance = rand() % enemy.accuracy >= enemy.accuracy/2)
 		{
-			Php -= enemy.damageMax;
-			cout << "Enemy hit you enemy for " << enemy.damageMax << endl;
+			chance = rand() % 100;
+			if (chance >= 50)
+			{
+				Php -= enemy.damageMax;
+				cout << "Enemy hit you enemy for " << enemy.damageMax << endl;
+			}
+			if (chance < 50)
+			{
+				Php -= enemy.damageMin;
+				cout << "Enemy hit you enemy for " << enemy.damageMin << endl;
+			}
 			if (Php <= 0)
 			{
 				IsAlivePlayer = false;
@@ -367,7 +382,7 @@ void Battle()
 		cout << "==============" << endl;
 		cout << "Your HP: " << Php << " / " << PhpMax << endl;
 		cout << "==============" << endl;
-		cout << "You won and got: " << 10 * enemy.level*player.difficulty << "XP and Gold:" << 5 * enemy.level / 2 * player.difficulty << endl;
+		cout << "You won and got: " << 10 * enemy.level*player.difficulty << "XP and Gold:" << 10 * enemy.level / 2 * player.difficulty << endl;
 		player.exp += 10 + (enemy.level*player.difficulty);
 		player.gold += 5 + (enemy.level / 2 * player.difficulty);
 		levelUp();
@@ -579,7 +594,7 @@ void Equip()
 		{
 			break;
 		}
-		else if (choice < 0 || Inv[choice].name == "") 
+		else if (choice < 0 || choice > Inv.size() || Inv[choice].name == "")
 		{
 			cout << "No such item" << endl;
 			system("pause");
@@ -765,7 +780,16 @@ void Story()
 
 void Save()
 {
-	ofstream offput;
+	fstream failas;
+	failas.open("taskai.txt");
+	if (failas.good()) {
+		failas << player.name << " ";
+		failas << 10*player.level*(player.gold*0.1)*player.difficulty << " ";
+		failas << endl;
+	}
+
+	failas.close();
+	/*ofstream offput;
 	offput.open("playerstats.txt");
 	if (!offput.is_open())
 	{
@@ -825,9 +849,9 @@ void Save()
 	offput.close();
 
 	cout << "Done Saving" << endl << endl;
-	system("pause");
+	system("pause");*/
 }
-
+/*
 void Load()
 {
 	ifstream input;
@@ -881,15 +905,22 @@ void Load()
 	{
 		cout << "Loading Inventory..." << endl;
 		int count = 1;
-		int item;
+		int value;
+		int type;
+		int dmg;
+		int def;
+		string name;
 		Inv.insert(Inv.begin(), { items[0].name = "", items[0].value = 0, items[0].type = 0, items[0].dmg = 0, items[0].def = 0 });
+		Inv.push_back(Invv);
 		while(!input.eof())
 		{
-			input >> Inv.insert(Inv.begin() + count, { items[0].name });
-			input >> Inv[count].value;
-			input >> Inv[count].type;
-			input >> Inv[count].dmg;
-			input >> Inv[count].def;
+			Inv.insert(Inv.begin() +count, { items[count].name = "", items[count].value = 0, items[count].type = 0, items[count].dmg = 0, items[count].def = 0 });
+			input >> name;
+			input >> value;	
+			input >> type;
+			input >> dmg;
+			input >> def;
+			Inv.push_back(Inv.begin() + count, {Inv[count].name = name, Inv[count].value = value, items[count].type = type, items[count].dmg = dmg, items[count].def = def});
 			count++;
 		}
 	}
@@ -898,7 +929,8 @@ void Load()
 	cout << "Loading complete" << endl << endl;
 	system("pause");
 }
-
+// -- ^^
+*/
 void Achievements()
 {
 	cout << "==== UNLOCKED ACHIEVEMENTS ====" << endl << endl;
@@ -972,3 +1004,44 @@ void Achievements()
 	}
 	system("pause");
 }
+
+void Rules()
+{
+	system("start rules.html");
+	return;
+}
+
+void Rating()
+{
+	string file_header = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"main.css\"><title>Rezultatai</title></head><body>";
+	string file_tail = "</body></html>";
+	ofstream failas;
+	ifstream taskai;
+
+	int kiekis = -1;
+	string a;
+	int b;
+	taskai.open("taskai.txt");
+	if (taskai.good()) {
+		while (!taskai.eof()) {
+			taskai >> a;
+			taskai >> b;
+			kiekis++;
+		}
+	}
+	taskai.close();
+	string sorai[9000];
+	int sortai[9000];
+
+	taskai.open("taskai.txt");
+	if (taskai.good()) {
+		for (int i = 0; i < kiekis; i++) {
+			taskai >> sorai[i];
+			taskai >> sortai[i];
+		}
+	}
+	
+	system("start rezultatai.html");
+	failas.close();
+}
+// -- ^^
